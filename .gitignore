@@ -20,7 +20,9 @@ secrets.json
 .ssh/
 
 # local tooling / scratch
-.claude/settings.local.json
+# assistant tooling kept on the author's machine only
+.claude/
+CLAUDE.md
 *.log
 *.tmp
 *.tmp.*

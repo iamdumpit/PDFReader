@@ -4,8 +4,8 @@ A desktop PDF reader and editor for Windows, built with Electron, React and Type
 fill forms, sign, reorganize pages, compress, password-protect and clean metadata — all locally, with no server and
 no upload: your files never leave your computer.
 
-> **Status:** early proof of concept. Run it from source (`npm run dev`) or build a Windows installer yourself
-> (`npm run dist`, see below). There is no published download yet.
+> **Status:** early proof of concept. See [Installation](#installation-windows-1011) to build and install it; there is
+> no published download yet.
 > Known problems and limitations are tracked in [BUGS.md](BUGS.md).
 
 ## Features
@@ -33,9 +33,54 @@ no upload: your files never leave your computer.
 - Password protect with AES-256 and permission limits; protected files open with a password prompt
 - Remove metadata (title, author, dates, XMP and more)
 
-## Getting started
+## Installation (Windows 10/11)
 
-Requirements: [Node.js](https://nodejs.org/) (developed on Node 24) and npm, on Windows 10/11.
+There is no ready-made download yet, so you build the installer once from the source and then install it like any other
+program. This takes about 10 minutes the first time.
+
+**What you need first**
+- [Git](https://git-scm.com/downloads)
+- [Node.js](https://nodejs.org/) LTS (developed on Node 24) — this also installs `npm`
+
+You can check both are installed by running `git --version` and `node -v` in a terminal.
+
+**1. Download the code**
+
+```bash
+git clone https://github.com/iamdumpit/PDFReader.git
+cd PDFReader
+```
+
+**2. Install the dependencies** (downloads a few hundred MB)
+
+```bash
+npm ci
+```
+
+**3. Build the installer**
+
+```bash
+npm run dist
+```
+
+The first build also downloads Electron and the installer tools. When it finishes, the installer is at
+`release\PDF-Reader-Setup-<version>.exe` (about 120 MB).
+
+**4. Run the installer**
+1. Double-click `PDF-Reader-Setup-<version>.exe`.
+2. Windows SmartScreen may show **"Windows protected your PC"** because the installer is not code-signed. Click
+   **More info → Run anyway**.
+3. Choose the install folder and finish the wizard. Shortcuts are added to the Start menu and the desktop.
+4. Start **PDF Reader** from the Start menu or desktop, then use **Open** (or Ctrl+O) to pick a PDF.
+
+**Updating:** run `git pull`, `npm ci` and `npm run dist` again, then run the new installer over the old one.
+
+**Uninstalling:** Settings → Apps → Installed apps → PDF Reader → Uninstall. Your PDFs are never touched.
+
+**Current limits:** the installer uses the default Electron icon, does not register itself as the `.pdf` handler
+(double-clicking a PDF in Windows will not open it in this app yet), has no auto-update, and is x64 only.
+
+## Run from source (development)
 
 ```bash
 git clone https://github.com/iamdumpit/PDFReader.git
@@ -48,24 +93,12 @@ npm run dev
 |---------|--------------|
 | `npm run dev` | Start the app with hot reload |
 | `npm run typecheck` | Type-check the project |
-| `npx vitest run` | Run the unit tests |
+| `npm test` | Run the unit tests |
 | `npm run build` | Production build into `out/` |
 | `npm run dist` | Build the Windows installer into `release/` |
 | `npm run dist:dir` | Build just the unpacked app (`release/win-unpacked`), faster for testing |
 
-## Building a Windows installer
-
-```bash
-npm ci
-npm run dist
-```
-
-This produces `release/PDF-Reader-Setup-<version>.exe` (about 120 MB), a standard NSIS installer that lets you choose the
-install folder and adds Start-menu and desktop shortcuts. The first build downloads Electron and the installer tooling.
-
-Current limits: the installer is **not code-signed**, so Windows SmartScreen shows "Windows protected your PC" — choose
-*More info → Run anyway*. It uses the default Electron icon, does not register itself as a `.pdf` handler (double-clicking
-a PDF will not open it in this app yet), and has no auto-update.
+If `npm run dev` complains that Electron is not installed, run `node node_modules/electron/install.js` once.
 
 ## How it works
 
@@ -75,8 +108,7 @@ a PDF will not open it in this app yet), and has no auto-update.
 - **zustand** holds application state; **electron-vite** builds the app
 
 Code layout: `src/main` and `src/preload` (Electron), `src/renderer/store` (state), `src/renderer/services` (all PDF
-logic, unit-tested), and the rest of `src/renderer` for the interface. See [CLAUDE.md](CLAUDE.md) for architecture
-notes and the development rules this project follows.
+logic, unit-tested), and the rest of `src/renderer` for the interface.
 
 ## Contributing
 
