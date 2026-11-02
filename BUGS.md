@@ -43,3 +43,6 @@ Collected during development; addressed together in a dedicated bug-fix phase.
 ## Completed feature requests (continued)
 
 - **Draw a signature with a pen** (done): *Sign ▾ → Draw signature…* opens a pad that works with mouse, touch or stylus (pen pressure changes line width), with undo, clear, four ink colours and a thickness slider. It saves a trimmed transparent PNG to the signature list and arms it for placing on the page. Limits: signatures are stored in the app's local storage; no typed-name signatures.
+
+- **Windows installer** (done): `npm run dist` builds `release/PDF-Reader-Setup-<version>.exe` (NSIS; choose folder, Start-menu and desktop shortcuts). Known limits: not code-signed (SmartScreen warning), default Electron icon, no `.pdf` file association (the app does not yet open a file passed on the command line), no auto-update, x64 only.
+

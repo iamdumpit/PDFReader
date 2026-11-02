@@ -4,7 +4,8 @@ A desktop PDF reader and editor for Windows, built with Electron, React and Type
 fill forms, sign, reorganize pages, compress, password-protect and clean metadata — all locally, with no server and
 no upload: your files never leave your computer.
 
-> **Status:** early proof of concept. It runs from source (`npm run dev`); there is no installer yet.
+> **Status:** early proof of concept. Run it from source (`npm run dev`) or build a Windows installer yourself
+> (`npm run dist`, see below). There is no published download yet.
 > Known problems and limitations are tracked in [BUGS.md](BUGS.md).
 
 ## Features
@@ -49,6 +50,22 @@ npm run dev
 | `npm run typecheck` | Type-check the project |
 | `npx vitest run` | Run the unit tests |
 | `npm run build` | Production build into `out/` |
+| `npm run dist` | Build the Windows installer into `release/` |
+| `npm run dist:dir` | Build just the unpacked app (`release/win-unpacked`), faster for testing |
+
+## Building a Windows installer
+
+```bash
+npm ci
+npm run dist
+```
+
+This produces `release/PDF-Reader-Setup-<version>.exe` (about 120 MB), a standard NSIS installer that lets you choose the
+install folder and adds Start-menu and desktop shortcuts. The first build downloads Electron and the installer tooling.
+
+Current limits: the installer is **not code-signed**, so Windows SmartScreen shows "Windows protected your PC" — choose
+*More info → Run anyway*. It uses the default Electron icon, does not register itself as a `.pdf` handler (double-clicking
+a PDF will not open it in this app yet), and has no auto-update.
 
 ## How it works
 

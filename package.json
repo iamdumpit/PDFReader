@@ -2,6 +2,8 @@
   "name": "pdf-reader",
   "version": "0.1.0",
   "description": "Desktop PDF reader and editor",
+  "author": "iamdumpit",
+  "homepage": "https://github.com/iamdumpit/PDFReader",
   "main": "./out/main/index.js",
   "private": true,
   "scripts": {
@@ -9,15 +11,9 @@
     "build": "electron-vite build",
     "preview": "electron-vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "vitest run"
-  },
-  "dependencies": {
-    "mupdf": "^1.28.1",
-    "pdf-lib": "^1.17.1",
-    "pdfjs-dist": "^6.4.299",
-    "react": "^19.3.1",
-    "react-dom": "^19.3.1",
-    "zustand": "^5.0.16"
+    "test": "vitest run",
+    "dist": "electron-vite build && electron-builder --win --x64",
+    "dist:dir": "electron-vite build && electron-builder --win --x64 --dir"
   },
   "devDependencies": {
     "@types/node": "^26.6.5",
@@ -25,9 +21,48 @@
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.2",
     "electron": "^45.0.0",
+    "electron-builder": "^26.18.0",
     "electron-vite": "^6.0.0",
+    "mupdf": "^1.28.1",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^6.4.299",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
     "typescript": "^7.0.2",
     "vite": "^8.3.5",
-    "vitest": "^5.0.5"
+    "vitest": "^5.0.5",
+    "zustand": "^5.0.16"
+  },
+  "build": {
+    "appId": "com.iamdumpit.pdfreader",
+    "productName": "PDF Reader",
+    "copyright": "Copyright © iamdumpit",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "out/**/*",
+      "package.json"
+    ],
+    "asar": true,
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "PDF-Reader-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "PDF Reader"
+    }
   }
 }
