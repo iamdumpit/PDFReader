@@ -1,6 +1,0 @@
-{
-  "version": "0.0.1",
-  "configurations": [
-    { "name": "renderer-web", "runtimeExecutable": "npx", "runtimeArgs": ["vite", "--config", "vite.preview.config.mts"], "port": 5199 }
-  ]
-}
