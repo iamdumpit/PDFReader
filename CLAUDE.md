@@ -11,6 +11,7 @@ Open work items live in [BUGS.md](BUGS.md).
 | Typecheck | `npm run typecheck` |
 | Unit tests | `npx vitest run` |
 | Production build | `npm run build` |
+| Windows installer (`release/`, git-ignored) | `npm run dist` (or `npm run dist:dir` for the unpacked app) |
 | Browser-pane preview (no Electron; mock `window.api`) | launch config `renderer-web` in `.claude/launch.json` |
 
 Before every commit: typecheck, tests and build must pass.
@@ -30,6 +31,8 @@ Before every commit: typecheck, tests and build must pass.
 - Load/create pdf-lib documents with `updateMetadata: false`, or Producer/dates are re-added on every edit.
 - pdf.js transfers buffers to its worker — pass `bytes.slice()`.
 - Annotation coordinates are stored top-left, unscaled page points; convert in `pdfEdit.ts` only.
+- Runtime libraries (react, pdfjs-dist, pdf-lib, mupdf, zustand) live in `devDependencies` on purpose: vite bundles them
+  into `out/`, and electron-builder would otherwise package them a second time.
 - Dev-only mocks in the browser preview must stay out of the repo (no fixtures, no `src/renderer/public/` test files).
 
 ## Code style
