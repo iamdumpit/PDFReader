@@ -1,0 +1,32 @@
+# dependencies and build output
+node_modules/
+out/
+dist/
+release/
+coverage/
+*.tsbuildinfo
+
+# secrets and credentials — never commit
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets.json
+.npmrc
+.aws/
+.ssh/
+
+# local tooling / scratch
+.claude/settings.local.json
+*.log
+*.tmp
+*.tmp.*
+.DS_Store
+Thumbs.db
+src/renderer/public/
+
+# personal documents: test PDFs are generated in code, never committed
+*.pdf
