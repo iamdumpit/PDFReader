@@ -26,6 +26,17 @@ export function App(): React.JSX.Element {
     document.documentElement.dataset.theme = nightMode ? 'night' : 'day'
   }, [nightMode])
 
+  // PDFs handed over by Windows (double-click, "Open with"), at start-up and while running
+  useEffect(() => {
+    const openAll = (paths: string[]): void => {
+      void (async () => {
+        for (const p of paths) await useTabs.getState().openPath(p)
+      })()
+    }
+    void window.api.launchFiles?.().then(openAll)
+    return window.api.onOpenFiles?.(openAll)
+  }, [])
+
   const onDrop = (e: React.DragEvent): void => {
     e.preventDefault()
     setDragging(false)

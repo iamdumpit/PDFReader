@@ -13,7 +13,11 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
     "dist": "electron-vite build && electron-builder --win --x64",
+    "dist:release": "electron-vite build && electron-builder --win --x64 --publish always",
     "dist:dir": "electron-vite build && electron-builder --win --x64 --dir"
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.11"
   },
   "devDependencies": {
     "@types/node": "^26.6.5",
@@ -45,7 +49,24 @@
       "package.json"
     ],
     "asar": true,
+    "fileAssociations": [
+      {
+        "ext": "pdf",
+        "name": "PDF Document",
+        "description": "PDF Document",
+        "role": "Editor"
+      }
+    ],
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "iamdumpit",
+        "repo": "PDFReader",
+        "releaseType": "release"
+      }
+    ],
     "win": {
+      "icon": "build/icon.ico",
       "target": [
         {
           "target": "nsis",

@@ -1,6 +1,8 @@
 import { app, BrowserWindow, dialog, ipcMain } from 'electron'
+import { existsSync } from 'fs'
 import { readFile, writeFile } from 'fs/promises'
-import { basename, join } from 'path'
+import { basename, extname, join } from 'path'
+import { startAutoUpdate } from './updater'
 
 interface OpenedFile {
   path: string
@@ -13,6 +15,15 @@ async function load(path: string): Promise<OpenedFile> {
   return { path, name: basename(path), data: new Uint8Array(buf) }
 }
 
+/** PDF paths from a command line (Explorer "Open with" / double-click passes the file as an argument). */
+function pdfArgs(argv: string[]): string[] {
+  return argv.slice(1).filter((a) => extname(a).toLowerCase() === '.pdf' && existsSync(a))
+}
+
+// files requested before the window finished loading; the renderer collects them on start
+let launchFiles = pdfArgs(process.argv)
+let mainWindow: BrowserWindow | null = null
+
 function createWindow(): BrowserWindow {
   const win = new BrowserWindow({
     width: 1280,
@@ -20,6 +31,7 @@ function createWindow(): BrowserWindow {
     minWidth: 800,
     minHeight: 500,
     backgroundColor: '#1e1e1e',
+    icon: join(__dirname, '../../build/icon.png'),
     autoHideMenuBar: true,
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
@@ -32,6 +44,10 @@ function createWindow(): BrowserWindow {
   } else {
     win.loadFile(join(__dirname, '../renderer/index.html'))
   }
+  mainWindow = win
+  win.on('closed', () => {
+    if (mainWindow === win) mainWindow = null
+  })
   return win
 }
 
@@ -74,8 +90,28 @@ ipcMain.handle('file:save-as', async (e, suggested: string, data: Uint8Array) =>
   return res.filePath
 })
 
+ipcMain.handle('app:launch-files', () => {
+  const files = launchFiles
+  launchFiles = []
+  return files
+})
+
+// one window: opening another PDF while the app runs adds it as a tab
+if (!app.requestSingleInstanceLock()) {
+  app.quit()
+} else {
+  app.on('second-instance', (_e, argv) => {
+    const files = pdfArgs(argv)
+    if (!mainWindow) return
+    if (mainWindow.isMinimized()) mainWindow.restore()
+    mainWindow.focus()
+    if (files.length) mainWindow.webContents.send('app:open-files', files)
+  })
+}
+
 app.whenReady().then(() => {
   createWindow()
+  startAutoUpdate(() => mainWindow)
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
