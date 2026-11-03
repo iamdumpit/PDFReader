@@ -4,8 +4,8 @@ A desktop PDF reader and editor for Windows, built with Electron, React and Type
 fill forms, sign, reorganize pages, compress, password-protect and clean metadata — all locally, with no server and
 no upload: your files never leave your computer.
 
-> **Status:** early proof of concept. See [Installation](#installation-windows-1011) to build and install it; there is
-> no published download yet.
+> **Status:** early proof of concept. Download the installer from the
+> [Releases page](https://github.com/iamdumpit/PDFReader/releases/latest) (see [Installation](#installation-windows-1011)).
 > Known problems and limitations are tracked in [BUGS.md](BUGS.md).
 
 ## Features
@@ -35,8 +35,20 @@ no upload: your files never leave your computer.
 
 ## Installation (Windows 10/11)
 
-There is no ready-made download yet, so you build the installer once from the source and then install it like any other
-program. This takes about 10 minutes the first time.
+**Easiest: download the installer**
+1. Open the [latest release](https://github.com/iamdumpit/PDFReader/releases/latest) and download
+   `PDF-Reader-Setup-<version>.exe` from **Assets**.
+2. Double-click it. Windows SmartScreen may show **"Windows protected your PC"** because the installer is not
+   code-signed yet. Click **More info → Run anyway**.
+3. Choose the install folder and finish the wizard. Shortcuts are added to the Start menu and the desktop.
+4. Start **PDF Reader**, then use **Open** (or Ctrl+O) to pick a PDF. Windows also lists it under **Open with** for
+   `.pdf` files (Settings → Apps → Default apps lets you make it the default).
+
+The installed app checks for new releases in the background, downloads them and asks to restart. It can also be
+updated by running a newer installer over it. To uninstall: Settings → Apps → Installed apps → PDF Reader → Uninstall.
+Your PDFs are never touched.
+
+**Alternative: build the installer yourself.** This takes about 10 minutes the first time.
 
 **What you need first**
 - [Git](https://git-scm.com/downloads)
@@ -73,12 +85,24 @@ The first build also downloads Electron and the installer tools. When it finishe
 3. Choose the install folder and finish the wizard. Shortcuts are added to the Start menu and the desktop.
 4. Start **PDF Reader** from the Start menu or desktop, then use **Open** (or Ctrl+O) to pick a PDF.
 
-**Updating:** run `git pull`, `npm ci` and `npm run dist` again, then run the new installer over the old one.
+**Updating a self-built copy:** run `git pull`, `npm ci` and `npm run dist` again, then run the new installer over
+the old one.
 
-**Uninstalling:** Settings → Apps → Installed apps → PDF Reader → Uninstall. Your PDFs are never touched.
+**Current limits:** the installer is not code-signed (SmartScreen warning) and is x64 only.
 
-**Current limits:** the installer uses the default Electron icon, does not register itself as the `.pdf` handler
-(double-clicking a PDF in Windows will not open it in this app yet), has no auto-update, and is x64 only.
+## Publishing a release (maintainers)
+
+1. On a branch, bump `version` in `package.json` (for example `0.2.0`) and merge it to `main` through a pull request.
+2. Create and push the matching tag from the updated `main`:
+   ```bash
+   git tag v0.2.0
+   git push origin v0.2.0
+   ```
+3. The **Release** workflow builds the installer on GitHub and publishes it, together with the files the in-app
+   updater needs (`latest.yml`, `.blockmap`), as a GitHub Release. The tag must equal `v` + the `package.json` version
+   or the workflow stops.
+
+Installed copies pick the new version up automatically within a few hours of the release (and at next launch).
 
 ## Run from source (development)
 
