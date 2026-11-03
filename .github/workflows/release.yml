@@ -37,7 +37,15 @@ jobs:
       - run: npm run typecheck
       - run: npm test
 
-      - name: Build installer and publish release
+      # electron-builder uploads several files in parallel and each one tries to create the release,
+      # which fails with 422 already_exists. Create it first so every upload just attaches to it.
+      - name: Create the release
+        shell: bash
+        run: gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --generate-notes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build installer and attach it
         run: npm run dist:release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
